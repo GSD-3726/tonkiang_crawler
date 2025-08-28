@@ -7,7 +7,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'tonkiang_crawler.py'
+      - 'scripts/tonkiang_crawler.py'  # 修改路径
 
 jobs:
   crawl-iptv:
@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 60
     permissions: 
       contents: write
-      issues: write  # 新增：允许创建 issue
+      issues: write
     
     steps:
     - name: Checkout repository
@@ -31,12 +31,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests
 
-    - name: Create github directory
+    - name: Create output directory
       run: |
-        mkdir -p github
+        mkdir -p github  # 建议在项目根目录创建
 
     - name: Run CCTV crawler
       id: crawler
+      working-directory: scripts  # 指定工作目录
       run: |
         python tonkiang_crawler.py
       env:
@@ -54,7 +55,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: cctv-iptv-m3u
-        path: github/ysws.m3u
+        path: github/ysws.m3u  # 保持路径不变（假设脚本输出到项目根目录的github文件夹）
 
     - name: Show results summary
       run: |
@@ -80,7 +81,7 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          github.rest.issues.create({
+          github.rest.issues..create({
             owner: context.repo.owner,
             repo: context.repo.repo,
             title: "🚨 CCTV IPTV爬虫执行失败",
