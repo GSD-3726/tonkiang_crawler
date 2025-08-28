@@ -1,0 +1,92 @@
+name: Tonkiang IPTV Crawler
+
+on:
+  workflow_dispatch:  # 手动触发
+  schedule:
+    - cron: '0 2 * * *'  # 每天UTC时间2点运行（北京时间10点）
+  push:
+    branches: [ main ]
+    paths:
+      - 'tonkiang_cctv_crawler.py'
+
+jobs:
+  crawl-iptv:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60  # 增加超时时间以适应多页爬取
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+
+    - name: Create github directory
+      run: |
+        mkdir -p github
+
+    - name: Run CCTV crawler
+      id: crawler
+      run: |
+        python tonkiang_cctv_crawler.py
+      env:
+        GITHUB_ACTIONS: true
+
+    - name: Commit and push results
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # 添加github目录下的M3U文件
+        git add github/ysws.m3u
+        
+        # 尝试提交，如果没有变化则忽略错误
+        git commit -m "Auto-update: CCTV IPTV M3U results $(date +'%Y-%m-%d %H:%M')" || echo "No changes to commit"
+        
+        # 尝试推送，如果失败则忽略（可能因为没有变化）
+        git push origin HEAD:main || echo "Nothing to push"
+
+    - name: Upload results as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: cctv-iptv-m3u
+        path: |
+          github/ysws.m3u
+
+    - name: Show results summary
+      run: |
+        echo "爬取完成!"
+        echo "总链接数: ${{ steps.crawler.outputs.total_links }}"
+        echo "有效链接: ${{ steps.crawler.outputs.valid_links }}"
+        echo "M3U文件: ${{ steps.crawler.outputs.output_file }}"
+
+    - name: Send notification on success
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: "✅ CCTV IPTV爬虫执行成功",
+            body: "CCTV IPTV爬虫成功运行，找到了 " + process.env.VALID_LINKS + " 个有效链接。"
+          })
+
+    - name: Send notification on failure
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: "🚨 CCTV IPTV爬虫执行失败",
+            body: "CCTV IPTV爬虫在最近一次运行中失败，请检查日志。"
+          })
