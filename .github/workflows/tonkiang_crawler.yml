@@ -13,6 +13,8 @@ jobs:
   crawl-iptv:
     runs-on: ubuntu-latest
     timeout-minutes: 60  # 增加超时时间以适应多页爬取
+    permissions: 
+      contents: write  # 新增：赋予工作流向仓库写入的权限
     
     steps:
     - name: Checkout repository
@@ -54,15 +56,16 @@ jobs:
         git push origin HEAD:main || echo "Nothing to push"
 
     - name: Upload results as artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4  # 修改：升级到 v4 版本
       with:
         name: cctv-iptv-m3u
-        path: |
-          github/ysws.m3u
+        path: github/ysws.m3u  # 路径写法微调
+        # retention-days: 5  # 可选：如需控制存储时长，取消注释并设置天数
 
     - name: Show results summary
       run: |
         echo "爬取完成!"
+        # 请确保上一步的 crawler 脚本正确设置了输出
         echo "总链接数: ${{ steps.crawler.outputs.total_links }}"
         echo "有效链接: ${{ steps.crawler.outputs.valid_links }}"
         echo "M3U文件: ${{ steps.crawler.outputs.output_file }}"
