@@ -54,7 +54,7 @@ jobs:
         git push origin HEAD:main || echo "Nothing to push"
 
     - name: Upload results as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: cctv-iptv-m3u
         path: |
