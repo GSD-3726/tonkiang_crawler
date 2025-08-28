@@ -101,7 +101,7 @@ class TonkiangCrawler:
     def verify_m3u8(self, m3u8_url):
         """验证M3U8链接有效性"""
         try:
-            response = self.session.get(m3u8_url, timeout=(5, 20), stream=True)
+            response = self.session.get(m3u8_url, timeout=(3, 5), stream=True)
             
             if response.status_code == 200:
                 content_type = response.headers.get('content-type', '').lower()
@@ -281,7 +281,7 @@ def main():
     "海南卫视"
 ]
     pages_to_crawl = 5  # 爬取5页
-    request_interval = 20  # 20秒间隔
+    request_interval = 10  # 20秒间隔
     
     try:
         output_file, all_links, valid_links = crawler.run(
@@ -324,4 +324,5 @@ def main():
         exit(1)
 
 if __name__ == "__main__":
+
     main()
