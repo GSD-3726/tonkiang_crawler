@@ -280,7 +280,7 @@ def main():
     "宁夏卫视",
     "海南卫视"
 ]
-    pages_to_crawl = 5  # 爬取5页
+    pages_to_crawl = 3  # 爬取5页
     request_interval = 10  # 20秒间隔
     
     try:
@@ -326,3 +326,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
