@@ -37,7 +37,7 @@ jobs:
     - name: Run CCTV crawler
       id: crawler
       run: |
-        python tonkiang_cctv_crawler.py
+        python tonkiang_crawler.py
       env:
         GITHUB_ACTIONS: true
 
