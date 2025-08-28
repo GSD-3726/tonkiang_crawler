@@ -1,9 +1,9 @@
 name: Tonkiang IPTV Crawler
 
 on:
-  workflow_dispatch:  # 手动触发
+  workflow_dispatch:
   schedule:
-    - cron: '0 2 * * *'  # 每天UTC时间2点运行（北京时间10点）
+    - cron: '0 2 * * *'
   push:
     branches: [ main ]
     paths:
@@ -12,9 +12,10 @@ on:
 jobs:
   crawl-iptv:
     runs-on: ubuntu-latest
-    timeout-minutes: 60  # 增加超时时间以适应多页爬取
+    timeout-minutes: 60
     permissions: 
-      contents: write  # 新增：赋予工作流向仓库写入的权限
+      contents: write
+      issues: write  # 新增：允许创建 issue
     
     steps:
     - name: Checkout repository
@@ -45,27 +46,19 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        
-        # 添加github目录下的M3U文件
         git add github/ysws.m3u
-        
-        # 尝试提交，如果没有变化则忽略错误
         git commit -m "Auto-update: CCTV IPTV M3U results $(date +'%Y-%m-%d %H:%M')" || echo "No changes to commit"
-        
-        # 尝试推送，如果失败则忽略（可能因为没有变化）
         git push origin HEAD:main || echo "Nothing to push"
 
     - name: Upload results as artifact
-      uses: actions/upload-artifact@v4  # 修改：升级到 v4 版本
+      uses: actions/upload-artifact@v4
       with:
         name: cctv-iptv-m3u
-        path: github/ysws.m3u  # 路径写法微调
-        # retention-days: 5  # 可选：如需控制存储时长，取消注释并设置天数
+        path: github/ysws.m3u
 
     - name: Show results summary
       run: |
         echo "爬取完成!"
-        # 请确保上一步的 crawler 脚本正确设置了输出
         echo "总链接数: ${{ steps.crawler.outputs.total_links }}"
         echo "有效链接: ${{ steps.crawler.outputs.valid_links }}"
         echo "M3U文件: ${{ steps.crawler.outputs.output_file }}"
@@ -79,7 +72,7 @@ jobs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             title: "✅ CCTV IPTV爬虫执行成功",
-            body: "CCTV IPTV爬虫成功运行，找到了 " + process.env.VALID_LINKS + " 个有效链接。"
+            body: `CCTV IPTV爬虫成功运行，找到了 ${{ steps.crawler.outputs.valid_links }} 个有效链接。`
           })
 
     - name: Send notification on failure
