@@ -229,23 +229,7 @@ def main():
     # 配置参数
     search_keywords = [
         # 央视频道
-        "CCTV1",   # 综合频道
-        "CCTV2",   # 财经频道
-        "CCTV3",   # 综艺频道
-        "CCTV4",   # 中文国际频道
-        "CCTV5",   # 体育频道
-        "CCTV6",   # 电影频道
-        "CCTV7",   # 国防军事频道
-        "CCTV8",   # 电视剧频道
-        "CCTV9",   # 纪录频道
-        "CCTV10",  # 科教频道
-        "CCTV11",  # 戏曲频道
-        "CCTV12",  # 社会与法频道
-        "CCTV13",  # 新闻频道
-        "CCTV14",  # 少儿频道
-        "CCTV15",  # 音乐频道
-        "CCTV16",  # 奥林匹克频道
-        "CCTV17"   # 农业农村频道
+        "CCTV1"
     ]
     pages_to_crawl = 1  # 爬取1页
     request_interval = 10  # 10秒间隔
@@ -291,6 +275,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
