@@ -1,0 +1,13 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="" tvg-name="CCTV1" tvg-logo="" group-title="CCTV",CCTV1
+http://api.kkitv.itv888.cn:8080/hls/f5fuln3kthe/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="CCTV1" tvg-logo="" group-title="CCTV",CCTV1
+http://221.205.206.85:9003/hls/1/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="CCTV1" tvg-logo="" group-title="CCTV",CCTV1
+http://api.kkitv.itv888.cn:8080/hls/9sxg4yjgot/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="CCTV1" tvg-logo="" group-title="CCTV",CCTV1
+http://111.43.126.240:9003/hls/26/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="CCTV1" tvg-logo="" group-title="CCTV",CCTV1
+http://111.43.126.240:9003/hls/28/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="CCTV1" tvg-logo="" group-title="CCTV",CCTV1
+http://171.120.248.199:9003/hls/14/index.m3u8
