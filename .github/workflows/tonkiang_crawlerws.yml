@@ -1,4 +1,4 @@
-name: IPTV Crawler Automation
+name: WSTV Crawler
 
 on:
   schedule:
