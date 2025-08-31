@@ -1,4 +1,4 @@
-name: WS TV Crawler
+name: WSTV Crawler
 
 on:
   workflow_dispatch:
