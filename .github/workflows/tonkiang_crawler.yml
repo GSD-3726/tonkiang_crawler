@@ -31,14 +31,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests
 
-    - name: Create output directory
-      run: |
-        mkdir -p github
-
     - name: Run CCTV crawler
       id: crawler
-      working-directory: scripts
       run: |
+        cd scripts
         python tonkiang_crawler.py
       env:
         GITHUB_ACTIONS: true
@@ -47,7 +43,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add ../github/ysws.m3u
+        git add github/ysws.m3u
         git commit -m "Auto-update: CCTV IPTV M3U results $(date +'%Y-%m-%d %H:%M')" || echo "No changes to commit"
         git push origin HEAD:main || echo "Nothing to push"
 
@@ -66,7 +62,7 @@ jobs:
 
     - name: Send notification on success
       if: success()
-      uses: actions/github-script@v5  # 使用 v5 版本避免语法问题
+      uses: actions/github-script@v5
       with:
         script: |
           github.issues.create({
@@ -78,7 +74,7 @@ jobs:
 
     - name: Send notification on failure
       if: failure()
-      uses: actions/github-script@v5  # 使用 v5 版本避免语法问题
+      uses: actions/github-script@v5
       with:
         script: |
           github.issues.create({
