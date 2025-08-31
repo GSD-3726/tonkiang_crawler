@@ -43,8 +43,8 @@ jobs:
 
     - name: Commit and push if changed
       run: |
-        if [ -f "output/ysws.m3u" ]; then  # 修改文件路径
-          git add output/ysws.m3u         # 修改添加路径
+        if [ -f "output/wsws.m3u" ]; then  # 修改文件路径
+          git add output/wsws.m3u         # 修改添加路径
           git commit -m "Update IPTV list - $(date +'%Y-%m-%d %H:%M')"
           git push origin HEAD:main
         else
