@@ -7,7 +7,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'scripts/tonkiang_crawler.py'  # 修改路径
+      - 'scripts/tonkiang_crawler.py'
 
 jobs:
   crawl-iptv:
@@ -33,11 +33,11 @@ jobs:
 
     - name: Create output directory
       run: |
-        mkdir -p github  # 建议在项目根目录创建
+        mkdir -p github
 
     - name: Run CCTV crawler
       id: crawler
-      working-directory: scripts  # 指定工作目录
+      working-directory: scripts
       run: |
         python tonkiang_crawler.py
       env:
@@ -47,7 +47,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add github/ysws.m3u
+        git add ../github/ysws.m3u
         git commit -m "Auto-update: CCTV IPTV M3U results $(date +'%Y-%m-%d %H:%M')" || echo "No changes to commit"
         git push origin HEAD:main || echo "Nothing to push"
 
@@ -55,7 +55,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: cctv-iptv-m3u
-        path: github/ysws.m3u  # 保持路径不变（假设脚本输出到项目根目录的github文件夹）
+        path: github/ysws.m3u
 
     - name: Show results summary
       run: |
@@ -66,22 +66,22 @@ jobs:
 
     - name: Send notification on success
       if: success()
-      uses: actions/github-script@v6
+      uses: actions/github-script@v5  # 使用 v5 版本避免语法问题
       with:
         script: |
-          github.rest.issues.create({
+          github.issues.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
             title: "✅ CCTV IPTV爬虫执行成功",
-            body: `CCTV IPTV爬虫成功运行，找到了 ${{ steps.crawler.outputs.valid_links }} 个有效链接。`
+            body: "CCTV IPTV爬虫成功运行，找到了 " + process.env.VALID_LINKS + " 个有效链接。"
           })
 
     - name: Send notification on failure
       if: failure()
-      uses: actions/github-script@v6
+      uses: actions/github-script@v5  # 使用 v5 版本避免语法问题
       with:
         script: |
-          github.rest.issues..create({
+          github.issues.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
             title: "🚨 CCTV IPTV爬虫执行失败",
