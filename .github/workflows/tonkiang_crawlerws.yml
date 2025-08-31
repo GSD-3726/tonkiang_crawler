@@ -31,7 +31,7 @@ jobs:
     - name: Run crawler
       id: crawler
       run: |
-        python scripts/tonkiang_crawler.py
+        python scripts/tonkiang_crawlerws.py
       env:
         GITHUB_ACTIONS: true
         OUTPUT_DIR: "output"  # 新增环境变量传递输出目录
