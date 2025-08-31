@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Tonkiang.us IPTV爬虫 - 按CCTV频道号搜索并输出对应链接
 """
@@ -152,35 +152,35 @@ class TonkiangCrawler:
         return all_links
 
     def save_to_m3u(self, links_data, filename="ysws.m3u", output_dir="../github"):
-    """保存结果为M3U格式文件"""
-    # 创建输出目录
-       if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-        print(f"创建目录: {output_dir}")
-    
-    filepath = os.path.join(output_dir, filename)
-    
-       with open(filepath, 'w', encoding='utf-8') as f:
-        # 写入M3U文件头
-        f.write('#EXTM3U\n')
+        """保存结果为M3U格式文件"""
+        # 创建输出目录
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            print(f"创建目录: {output_dir}")
         
-        # 写入每个链接
-        valid_count = 0
-        for item in links_data:
-            link = item['url']
-            source = item['source']
+        filepath = os.path.join(output_dir, filename)
+        
+        with open(filepath, 'w', encoding='utf-8') as f:
+            # 写入M3U文件头
+            f.write('#EXTM3U\n')
             
-            if self.verify_m3u8(link):
-                # 使用搜索关键词作为频道名称
-                f.write(f'#EXTINF:-1 tvg-id="" tvg-name="{source}" tvg-logo="" group-title="CCTV",{source}\n')
-                f.write(f'{link}\n')
-                print(f"✓ 已添加有效链接: {source} -> {link}")
-                valid_count += 1
-            else:
-                print(f"✗ 跳过无效链接: {link}")
-    
-    print(f"成功保存 {valid_count} 个有效链接到 {filepath}")
-    return filepath, valid_count
+            # 写入每个链接
+            valid_count = 0
+            for item in links_data:
+                link = item['url']
+                source = item['source']
+                
+                if self.verify_m3u8(link):
+                    # 使用搜索关键词作为频道名称
+                    f.write(f'#EXTINF:-1 tvg-id="" tvg-name="{source}" tvg-logo="" group-title="CCTV",{source}\n')
+                    f.write(f'{link}\n')
+                    print(f"✓ 已添加有效链接: {source} -> {link}")
+                    valid_count += 1
+                else:
+                    print(f"✗ 跳过无效链接: {link}")
+        
+        print(f"成功保存 {valid_count} 个有效链接到 {filepath}")
+        return filepath, valid_count
 
     def run(self, keywords=None, pages=10, interval=10):
         """运行爬虫"""
@@ -273,11 +273,4 @@ def main():
         exit(1)
 
 if __name__ == "__main__":
-
     main()
-
-
-
-
-
-
