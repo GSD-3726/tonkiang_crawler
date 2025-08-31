@@ -1,44 +1,75 @@
+# .github/workflows/iptv-crawler.yml
 name: IPTV Crawler
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天运行一次
-  workflow_dispatch:  # 允许手动触发
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   crawl-iptv:
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: write
+      issues: write
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-      with:
-        persist-credentials: false
-        
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
-        
+
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
         pip install requests
-        
+
     - name: Run crawler
-      run: python crawler.py
-      
+      run: |
+        python scripts/tonkiang_crawler.py
+      env:
+        GITHUB_ACTIONS: true
+
     - name: Configure Git
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+
     - name: Commit and push if changed
       run: |
-        if [ -n "$(git status --porcelain)" ]; then
+        if [ -f "github/ysws.m3u" ]; then
           git add github/ysws.m3u
-          git commit -m "Update IPTV list - $(date)"
-          git push
+          git commit -m "Update IPTV list - $(date +'%Y-%m-%d %H:%M')"
+          git push origin HEAD:main
         else
-          echo "No changes to commit"
+          echo "M3U文件未生成，请检查爬虫日志"
+          exit 1
         fi
+
+    - name: Send notification on success
+      if: success()
+      uses: actions/github-script@v5
+      with:
+        script: |
+          await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: "✅ IPTV列表更新成功",
+            body: `成功更新IPTV列表，包含 ${process.env.VALID_LINKS} 个有效链接`
+          })
+        env:
+          VALID_LINKS: ${{ steps.crawler.outputs.valid_links }}
+
+    - name: Send notification on failure
+      if: failure()
+      uses: actions/github-script@v5
+      with:
+        script: |
+          await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: "🚨 IPTV列表更新失败",
+            body: "请检查[工作流日志](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          })
