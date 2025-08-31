@@ -1,69 +1,249 @@
 #EXTM3U
+#EXTINF:-1 tvg-id="" tvg-name="安徽卫视" tvg-logo="" group-title="卫视",安徽卫视
+http://sh.lnott.top:880/dx34.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="安徽卫视" tvg-logo="" group-title="卫视",安徽卫视
+http://hbhyjq.ufyct.com:1088/hls/81/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="安徽卫视" tvg-logo="" group-title="卫视",安徽卫视
+http://ak6668768.zicp.io:8834/live1036.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="安徽卫视" tvg-logo="" group-title="卫视",安徽卫视
+http://a21709.tv.netsite.cc/proxy/149472807/149472807.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="北京卫视" tvg-logo="" group-title="卫视",北京卫视
+http://sh.lnott.top:880/dx29.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="北京卫视" tvg-logo="" group-title="卫视",北京卫视
+http://hbhyjq.ufyct.com:1088/hls/32/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="北京卫视" tvg-logo="" group-title="卫视",北京卫视
+http://ak6668768.zicp.io:8830/live1032.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="重庆卫视" tvg-logo="" group-title="卫视",重庆卫视
+http://ak6668768.zicp.io:8845/live1071.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="重庆卫视" tvg-logo="" group-title="卫视",重庆卫视
+http://api.kkitv.itv888.cn:8080/hls/ogh3s6tbw6/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="重庆卫视" tvg-logo="" group-title="卫视",重庆卫视
+http://hbhyjq.ufyct.com:1088/hls/78/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="重庆卫视" tvg-logo="" group-title="卫视",重庆卫视
+http://sh.lnott.top:880/dx46.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="重庆卫视" tvg-logo="" group-title="卫视",重庆卫视
+http://a21709.tv.netsite.cc/proxy/562106987/562106987.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="东南卫视" tvg-logo="" group-title="卫视",东南卫视
+http://sh.lnott.top:880/dx47.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="东南卫视" tvg-logo="" group-title="卫视",东南卫视
+http://hbhyjq.ufyct.com:1088/hls/36/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="东南卫视" tvg-logo="" group-title="卫视",东南卫视
+http://a21709.tv.netsite.cc/proxy/698479958/698479958.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="东南卫视" tvg-logo="" group-title="卫视",东南卫视
+https://stream1.freetv.fun/d3a633f9603e282ecb78c53b3220a5cc6d4ae302a789711407a0794bc0c79c00.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="广东卫视" tvg-logo="" group-title="卫视",广东卫视
+http://sh.lnott.top:880/dx40.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="广东卫视" tvg-logo="" group-title="卫视",广东卫视
+https://h5cdn3.kylintv.tv/live/gdtvhd_iphone.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="广西卫视" tvg-logo="" group-title="卫视",广西卫视
+http://111.43.126.240:9003/hls/62/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="广西卫视" tvg-logo="" group-title="卫视",广西卫视
+http://sh.lnott.top:880/dx41.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="广西卫视" tvg-logo="" group-title="卫视",广西卫视
+http://a21709.tv.netsite.cc/proxy/102904669/102904669.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="贵州卫视" tvg-logo="" group-title="卫视",贵州卫视
+http://hbhyjq.ufyct.com:1088/hls/40/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="贵州卫视" tvg-logo="" group-title="卫视",贵州卫视
+https://k44991.kylintv.tv/live/guizhoutv_iphone.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="贵州卫视" tvg-logo="" group-title="卫视",贵州卫视
+http://sh.lnott.top:880/dx50.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="贵州卫视" tvg-logo="" group-title="卫视",贵州卫视
+http://a21709.tv.netsite.cc/proxy/1494390345/1494390345.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="贵州卫视" tvg-logo="" group-title="卫视",贵州卫视
+http://a21709.tv.netsite.cc/proxy/189740973/189740973.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="贵州卫视" tvg-logo="" group-title="卫视",贵州卫视
+https://stream1.freetv.fun/cc54b485fc3912265c9dbb24fe2b6d1ba2b65412d0ff45b904bc4d53ea02bf67.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="河北卫视" tvg-logo="" group-title="卫视",河北卫视
+http://sh.lnott.top:880/dx63.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="河北卫视" tvg-logo="" group-title="卫视",河北卫视
+http://a21709.tv.netsite.cc/proxy/1385861493/1385861493.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="河北卫视" tvg-logo="" group-title="卫视",河北卫视
+http://36.32.174.67:60080/newlive/live/hls/36/live.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="河北卫视" tvg-logo="" group-title="卫视",河北卫视
+https://stream1.freetv.fun/3d72ae947c8d574411b9d26bc49ef1b6e8c2c5bf3a55c97df0b37f0af5080a99.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="河南卫视" tvg-logo="" group-title="卫视",河南卫视
+http://hbhyjq.ufyct.com:1088/hls/34/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="河南卫视" tvg-logo="" group-title="卫视",河南卫视
+http://sh.lnott.top:880/dx44.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="河南卫视" tvg-logo="" group-title="卫视",河南卫视
+http://a21709.tv.netsite.cc/proxy/251465659/251465659.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="河南卫视" tvg-logo="" group-title="卫视",河南卫视
+https://stream1.freetv.fun/ea842ab34e6da31e0eae5bd8be6c4b7d67f0b0c214efaca7ff2c5a1718f7fe55.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="黑龙江卫视" tvg-logo="" group-title="卫视",黑龙江卫视
+http://sh.lnott.top:880/dx36.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="黑龙江卫视" tvg-logo="" group-title="卫视",黑龙江卫视
+http://hbhyjq.ufyct.com:1088/hls/42/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="黑龙江卫视" tvg-logo="" group-title="卫视",黑龙江卫视
+http://a21709.tv.netsite.cc/proxy/982668357/982668357.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="黑龙江卫视" tvg-logo="" group-title="卫视",黑龙江卫视
+http://a21709.tv.netsite.cc/proxy/1993445467/1993445467.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="湖北卫视" tvg-logo="" group-title="卫视",湖北卫视
+http://hbhyjq.ufyct.com:1088/hls/57/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="湖北卫视" tvg-logo="" group-title="卫视",湖北卫视
+http://ak6668768.zicp.io:8838/live1040.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="湖北卫视" tvg-logo="" group-title="卫视",湖北卫视
+http://sh.lnott.top:880/dx42.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="湖北卫视" tvg-logo="" group-title="卫视",湖北卫视
+https://k44991.kylintv.tv/live/hubeitv_iphone.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="湖南卫视" tvg-logo="" group-title="卫视",湖南卫视
 https://k44991.kylintv.tv/live/huntvhd_iphone.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="湖南卫视" tvg-logo="" group-title="卫视",湖南卫视
+http://api.kkitv.itv888.cn:8080/hls/hoxiunz7ce/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="湖南卫视" tvg-logo="" group-title="卫视",湖南卫视
 http://sh.lnott.top:880/dx31.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="湖南卫视" tvg-logo="" group-title="卫视",湖南卫视
-http://hbhyjq.ufyct.com:1088/hls/56/index.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="湖南卫视" tvg-logo="" group-title="卫视",湖南卫视
 http://ak6668768.zicp.io:8827/live1028.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="湖南卫视" tvg-logo="" group-title="卫视",湖南卫视
+http://hbhyjq.ufyct.com:1088/hls/56/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="吉林卫视" tvg-logo="" group-title="卫视",吉林卫视
+http://hbhyjq.ufyct.com:1088/hls/37/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="吉林卫视" tvg-logo="" group-title="卫视",吉林卫视
+http://sh.lnott.top:880/dx37.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="吉林卫视" tvg-logo="" group-title="卫视",吉林卫视
+http://a21709.tv.netsite.cc/proxy/649197264/649197264.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="江苏卫视" tvg-logo="" group-title="卫视",江苏卫视
+http://ak6668768.zicp.io:8829/live1030.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="江苏卫视" tvg-logo="" group-title="卫视",江苏卫视
+http://sh.lnott.top:880/dx33.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="江西卫视" tvg-logo="" group-title="卫视",江西卫视
+http://sh.lnott.top:880/dx43.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="江西卫视" tvg-logo="" group-title="卫视",江西卫视
+http://218.27.55.132:85/tsfile/live/1017_1.m3u8?key=txiptv
+#EXTINF:-1 tvg-id="" tvg-name="江西卫视" tvg-logo="" group-title="卫视",江西卫视
+http://hbhyjq.ufyct.com:1088/hls/55/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="江西卫视" tvg-logo="" group-title="卫视",江西卫视
+http://a21709.tv.netsite.cc/proxy/203181175/203181175.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="辽宁卫视" tvg-logo="" group-title="卫视",辽宁卫视
+http://api.kkitv.itv888.cn:8080/hls/iibq0absdjr/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="辽宁卫视" tvg-logo="" group-title="卫视",辽宁卫视
+http://111.43.126.240:9003/hls/57/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="辽宁卫视" tvg-logo="" group-title="卫视",辽宁卫视
+http://hbhyjq.ufyct.com:1088/hls/59/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="辽宁卫视" tvg-logo="" group-title="卫视",辽宁卫视
+http://sh.lnott.top:880/dx19.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="辽宁卫视" tvg-logo="" group-title="卫视",辽宁卫视
+http://ak6668768.zicp.io:8843/live1045.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="辽宁卫视" tvg-logo="" group-title="卫视",辽宁卫视
+http://a21709.tv.netsite.cc/proxy/463441117/463441117.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="内蒙古卫视" tvg-logo="" group-title="卫视",内蒙古卫视
+http://sh.lnott.top:880/dx52.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="内蒙古卫视" tvg-logo="" group-title="卫视",内蒙古卫视
+http://111.43.126.240:9003/hls/63/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="内蒙古卫视" tvg-logo="" group-title="卫视",内蒙古卫视
+http://hbhyjq.ufyct.com:1088/hls/43/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="内蒙古卫视" tvg-logo="" group-title="卫视",内蒙古卫视
+http://a21709.tv.netsite.cc/proxy/1149350272/1149350272.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="内蒙古卫视" tvg-logo="" group-title="卫视",内蒙古卫视
+http://a21709.tv.netsite.cc/proxy/1838037272/1838037272.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="内蒙古卫视" tvg-logo="" group-title="卫视",内蒙古卫视
+http://120.76.248.139/live/bfgd/4200000110.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="内蒙古卫视" tvg-logo="" group-title="卫视",内蒙古卫视
+http://hlsbkmgsplive.miguvideo.com/envivo_w/2018/SD/neimeng/1000/index.m3u8?&encrypt=
+#EXTINF:-1 tvg-id="" tvg-name="山东卫视" tvg-logo="" group-title="卫视",山东卫视
+http://hlsbkmgsplive.miguvideo.com/wd-shandonghd-600/index.m3u8?&encrypt=
+#EXTINF:-1 tvg-id="" tvg-name="山东卫视" tvg-logo="" group-title="卫视",山东卫视
+http://hbhyjq.ufyct.com:1088/hls/39/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="山东卫视" tvg-logo="" group-title="卫视",山东卫视
+http://221.0.78.26:881/hls/50217/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="山东卫视" tvg-logo="" group-title="卫视",山东卫视
+http://hlsbkmgsplive.miguvideo.com/wd-shandonghd-1200/index.m3u8?&encrypt=
+#EXTINF:-1 tvg-id="" tvg-name="山东卫视" tvg-logo="" group-title="卫视",山东卫视
+http://ak6668768.zicp.io:8860/live1078.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="山东卫视" tvg-logo="" group-title="卫视",山东卫视
+http://sh.lnott.top:880/dx38.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="山西卫视" tvg-logo="" group-title="卫视",山西卫视
+http://111.43.126.240:9003/hls/61/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="山西卫视" tvg-logo="" group-title="卫视",山西卫视
+http://ak6668768.zicp.io:8865/live1090.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="山西卫视" tvg-logo="" group-title="卫视",山西卫视
+http://sh.lnott.top:880/dx39.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="山西卫视" tvg-logo="" group-title="卫视",山西卫视
+http://hbhyjq.ufyct.com:1088/hls/35/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="山西卫视" tvg-logo="" group-title="卫视",山西卫视
+http://120.76.248.139/live/bfgd/4200000109.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="山西卫视" tvg-logo="" group-title="卫视",山西卫视
+http://36.32.174.67:60080/newlive/live/hls/43/live.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="山西卫视" tvg-logo="" group-title="卫视",山西卫视
+http://a21709.tv.netsite.cc/proxy/723496018/723496018.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="陕西卫视" tvg-logo="" group-title="卫视",陕西卫视
+http://ak6668768.zicp.io:8866/live1092.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="陕西卫视" tvg-logo="" group-title="卫视",陕西卫视
+http://sh.lnott.top:880/dx51.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="陕西卫视" tvg-logo="" group-title="卫视",陕西卫视
+http://gxlive.snrtv.com/sxws-SD.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="陕西卫视" tvg-logo="" group-title="卫视",陕西卫视
+http://111.43.126.240:9003/hls/68/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="陕西卫视" tvg-logo="" group-title="卫视",陕西卫视
+http://36.32.174.67:60080/newlive/live/hls/44/live.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="陕西卫视" tvg-logo="" group-title="卫视",陕西卫视
+http://a21709.tv.netsite.cc/proxy/1158533991/1158533991.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="陕西卫视" tvg-logo="" group-title="卫视",陕西卫视
+http://a21709.tv.netsite.cc/proxy/917851306/917851306.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="四川卫视" tvg-logo="" group-title="卫视",四川卫视
+http://ak6668768.zicp.io:8839/live1041.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="四川卫视" tvg-logo="" group-title="卫视",四川卫视
+http://sh.lnott.top:880/dx45.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="四川卫视" tvg-logo="" group-title="卫视",四川卫视
+http://hbhyjq.ufyct.com:1088/hls/58/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="四川卫视" tvg-logo="" group-title="卫视",四川卫视
+http://a21709.tv.netsite.cc/proxy/59757691/59757691.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="天津卫视" tvg-logo="" group-title="卫视",天津卫视
+http://hbhyjq.ufyct.com:1088/hls/33/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="天津卫视" tvg-logo="" group-title="卫视",天津卫视
+http://sh.lnott.top:880/dx30.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="天津卫视" tvg-logo="" group-title="卫视",天津卫视
+http://a21709.tv.netsite.cc/proxy/240376980/240376980.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="西藏卫视" tvg-logo="" group-title="卫视",西藏卫视
+http://111.43.126.240:9003/hls/58/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="西藏卫视" tvg-logo="" group-title="卫视",西藏卫视
+http://api.kkitv.itv888.cn:8080/hls/j9loqozn2m/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="西藏卫视" tvg-logo="" group-title="卫视",西藏卫视
+http://sh.lnott.top:880/dx57.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="西藏卫视" tvg-logo="" group-title="卫视",西藏卫视
+http://a21709.tv.netsite.cc/proxy/1062504144/1062504144.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="西藏卫视" tvg-logo="" group-title="卫视",西藏卫视
+http://36.32.174.67:60080/newlive/live/hls/48/live.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="西藏卫视" tvg-logo="" group-title="卫视",西藏卫视
+http://120.76.248.139/live/bfgd/4200000121.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="新疆卫视" tvg-logo="" group-title="卫视",新疆卫视
+http://sh.lnott.top:880/dx55.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="新疆卫视" tvg-logo="" group-title="卫视",新疆卫视
+http://111.43.126.240:9003/hls/64/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="新疆卫视" tvg-logo="" group-title="卫视",新疆卫视
+http://a21709.tv.netsite.cc/proxy/86832656/86832656.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="新疆卫视" tvg-logo="" group-title="卫视",新疆卫视
+http://36.32.174.67:60080/newlive/live/hls/47/live.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="新疆卫视" tvg-logo="" group-title="卫视",新疆卫视
+http://120.76.248.139/live/bfgd/4200000150.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="云南卫视" tvg-logo="" group-title="卫视",云南卫视
+http://hbhyjq.ufyct.com:1088/hls/41/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="云南卫视" tvg-logo="" group-title="卫视",云南卫视
+http://111.43.126.240:9003/hls/60/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="云南卫视" tvg-logo="" group-title="卫视",云南卫视
+http://ak6668768.zicp.io:8863/live1084.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="云南卫视" tvg-logo="" group-title="卫视",云南卫视
+http://sh.lnott.top:880/dx49.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="云南卫视" tvg-logo="" group-title="卫视",云南卫视
+http://a21709.tv.netsite.cc/proxy/599737477/599737477.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="浙江卫视" tvg-logo="" group-title="卫视",浙江卫视
 http://sh.lnott.top:880/dx32.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="浙江卫视" tvg-logo="" group-title="卫视",浙江卫视
 https://ali-m-l.cztv.com/channels/lantian/channel001/1080p.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="浙江卫视" tvg-logo="" group-title="卫视",浙江卫视
-http://111.14.181.15:9901/tsfile/live/0124_1.m3u8
+http://hbhyjq.ufyct.com:1088/hls/79/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="浙江卫视" tvg-logo="" group-title="卫视",浙江卫视
 http://ak6668768.zicp.io:8828/live1031.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="浙江卫视" tvg-logo="" group-title="卫视",浙江卫视
-http://hbhyjq.ufyct.com:1088/hls/79/index.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="江苏卫视" tvg-logo="" group-title="卫视",江苏卫视
-http://sh.lnott.top:880/dx33.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="江苏卫视" tvg-logo="" group-title="卫视",江苏卫视
-http://hbhyjq.ufyct.com:1088/hls/38/index.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="江苏卫视" tvg-logo="" group-title="卫视",江苏卫视
-http://ak6668768.zicp.io:8829/live1030.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="东方卫视" tvg-logo="" group-title="卫视",东方卫视
-https://live.tvfix.org/live/dfhd/index.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="东方卫视" tvg-logo="" group-title="卫视",东方卫视
-http://sh.lnott.top:880/dx35.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="北京卫视" tvg-logo="" group-title="卫视",北京卫视
-http://hbhyjq.ufyct.com:1088/hls/32/index.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="北京卫视" tvg-logo="" group-title="卫视",北京卫视
-http://ak6668768.zicp.io:8830/live1032.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="北京卫视" tvg-logo="" group-title="卫视",北京卫视
-http://sh.lnott.top:880/dx29.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="广东卫视" tvg-logo="" group-title="卫视",广东卫视
-http://sh.lnott.top:880/dx40.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="广东卫视" tvg-logo="" group-title="卫视",广东卫视
-http://hbhyjq.ufyct.com:1088/hls/82/index.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="广东卫视" tvg-logo="" group-title="卫视",广东卫视
-https://h5cdn3.kylintv.tv/live/gdtvhd_iphone.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="深圳卫视" tvg-logo="" group-title="卫视",深圳卫视
-http://ak6668768.zicp.io:8855/live1080.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="深圳卫视" tvg-logo="" group-title="卫视",深圳卫视
 http://sh.lnott.top:880/dx61.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="深圳卫视" tvg-logo="" group-title="卫视",深圳卫视
+http://ak6668768.zicp.io:8855/live1080.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="深圳卫视" tvg-logo="" group-title="卫视",深圳卫视
 http://hbhyjq.ufyct.com:1088/hls/84/index.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="天津卫视" tvg-logo="" group-title="卫视",天津卫视
-http://hbhyjq.ufyct.com:1088/hls/33/index.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="天津卫视" tvg-logo="" group-title="卫视",天津卫视
-http://sh.lnott.top:880/dx30.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="山东卫视" tvg-logo="" group-title="卫视",山东卫视
-http://hbhyjq.ufyct.com:1088/hls/39/index.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="山东卫视" tvg-logo="" group-title="卫视",山东卫视
-http://hlsbkmgsplive.miguvideo.com/wd-shandonghd-1200/index.m3u8?&encrypt=
-#EXTINF:-1 tvg-id="" tvg-name="山东卫视" tvg-logo="" group-title="卫视",山东卫视
-http://221.0.78.26:881/hls/50217/index.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="山东卫视" tvg-logo="" group-title="卫视",山东卫视
-http://hlsbkmgsplive.miguvideo.com/wd-shandonghd-600/index.m3u8?&encrypt=
-#EXTINF:-1 tvg-id="" tvg-name="山东卫视" tvg-logo="" group-title="卫视",山东卫视
-http://ak6668768.zicp.io:8860/live1078.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="山东卫视" tvg-logo="" group-title="卫视",山东卫视
-http://sh.lnott.top:880/dx38.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="安徽卫视" tvg-logo="" group-title="卫视",安徽卫视
-http://ak6668768.zicp.io:8834/live1036.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="安徽卫视" tvg-logo="" group-title="卫视",安徽卫视
-http://hbhyjq.ufyct.com:1088/hls/81/index.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="安徽卫视" tvg-logo="" group-title="卫视",安徽卫视
-http://sh.lnott.top:880/dx34.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="海峡卫视" tvg-logo="" group-title="卫视",海峡卫视
+https://stream1.freetv.fun/f950666569a200f63d8bb4aebd7066fdf3deb459c84302c13e3949d71c17df29.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="海峡卫视" tvg-logo="" group-title="卫视",海峡卫视
+https://k44991.kylintv.tv/live/fjstv_iphone.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="海峡卫视" tvg-logo="" group-title="卫视",海峡卫视
+http://218.104.239.114:9901/tsfile/live/0150_1.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="海峡卫视" tvg-logo="" group-title="卫视",海峡卫视
+http://a21709.tv.netsite.cc/proxy/1400186150/1400186150.m3u8
