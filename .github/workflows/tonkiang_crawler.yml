@@ -1,4 +1,4 @@
-name: IPTV Crawler
+name: CCTV Crawler 
 
 on:
   schedule:
@@ -25,12 +25,16 @@ jobs:
       run: |
         pip install requests
 
+    - name: Create output directory
+      run: mkdir -p output  # 新增目录创建步骤
+
     - name: Run crawler
-      id: crawler  # 添加步骤ID用于输出引用
+      id: crawler
       run: |
         python scripts/tonkiang_crawler.py
       env:
         GITHUB_ACTIONS: true
+        OUTPUT_DIR: "output"  # 新增环境变量传递输出目录
 
     - name: Configure Git
       run: |
@@ -39,8 +43,8 @@ jobs:
 
     - name: Commit and push if changed
       run: |
-        if [ -f "github/ysws.m3u" ]; then
-          git add github/ysws.m3u
+        if [ -f "output/ysws.m3u" ]; then  # 修改文件路径
+          git add output/ysws.m3u         # 修改添加路径
           git commit -m "Update IPTV list - $(date +'%Y-%m-%d %H:%M')"
           git push origin HEAD:main
         else
@@ -60,7 +64,7 @@ jobs:
             body: `成功更新IPTV列表，包含 ${process.env.VALID_LINKS} 个有效链接`
           })
       env:
-        VALID_LINKS: ${{ steps.crawler.outputs.valid_links }}  # 引用已定义的步骤ID
+        VALID_LINKS: ${{ steps.crawler.outputs.valid_links }}
 
     - name: Send notification on failure
       if: failure()
