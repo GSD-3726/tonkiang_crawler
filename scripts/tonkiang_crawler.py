@@ -157,7 +157,7 @@ def main():
         "CCTV11", "CCTV12", "CCTV13", "CCTV14", "CCTV15",
         "CCTV16", "CCTV17"
     ]
-    pages_to_crawl = 2
+    pages_to_crawl = 4
     request_interval = 8
     
     try:
@@ -186,3 +186,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
