@@ -1,4 +1,3 @@
-# .github/workflows/iptv-crawler.yml
 name: IPTV Crawler
 
 on:
@@ -27,6 +26,7 @@ jobs:
         pip install requests
 
     - name: Run crawler
+      id: crawler  # 添加步骤ID用于输出引用
       run: |
         python scripts/tonkiang_crawler.py
       env:
@@ -59,8 +59,8 @@ jobs:
             title: "✅ IPTV列表更新成功",
             body: `成功更新IPTV列表，包含 ${process.env.VALID_LINKS} 个有效链接`
           })
-        env:
-          VALID_LINKS: ${{ steps.crawler.outputs.valid_links }}
+      env:
+        VALID_LINKS: ${{ steps.crawler.outputs.valid_links }}  # 引用已定义的步骤ID
 
     - name: Send notification on failure
       if: failure()
