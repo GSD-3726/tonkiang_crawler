@@ -7,7 +7,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'scripts/tonkiang_crawler.py'
+      - 'scripts/tonkiang_crawlerws.py'
 
 jobs:
   crawl-wstv:
