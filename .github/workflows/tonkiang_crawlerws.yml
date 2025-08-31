@@ -30,10 +30,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests
 
-    - name: Run WS TV crawler
+    - name: Run WSTV crawler
       id: crawler
       run: |
-        python scripts/tonkiang_crawler.py
+        python scripts/tonkiang_crawlerws.py
       env:
         GITHUB_ACTIONS: true
 
