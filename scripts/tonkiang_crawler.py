@@ -151,7 +151,7 @@ class TonkiangCrawler:
         
         return all_links
 
-    def save_to_m3u(self, links_data, filename="ysws.m3u", output_dir="github"):
+    def save_to_m3u(self, links_data, filename="ysws.m3u", output_dir="output"):
         """保存结果为M3U格式文件"""
         # 创建输出目录
         if not os.path.exists(output_dir):
@@ -209,7 +209,7 @@ class TonkiangCrawler:
             output_file, valid_count = self.save_to_m3u(
                 self.all_links, 
                 "ysws.m3u", 
-                "github"
+                "output"
             )
             
             print(f"其中 {valid_count} 个链接验证有效")
@@ -274,4 +274,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
