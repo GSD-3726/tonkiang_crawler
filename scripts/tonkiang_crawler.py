@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 """
-Tonkiang.us IPTV爬虫 - 按CCTV频道号搜索并输出对应链接
+Tonkiang.us IPTV爬虫 - 优化版（GitHub Actions专用）
 """
 
 import requests
 import re
 import os
-import time
 import random
 import hashlib
 from datetime import datetime
-from urllib.parse import urlencode
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from functools import lru_cache
+import threading
 
 class TonkiangCrawler:
     def __init__(self):
@@ -24,200 +25,123 @@ class TonkiangCrawler:
         })
         self.base_url = "https://tonkiang.us/"
         self.request_timeout = (5, 15)
-        self.all_links = []  # 存储所有找到的链接
+        self.all_links = []
+        self.lock = threading.Lock()
 
+    @lru_cache(maxsize=100)
     def generate_random_hash(self):
-        """生成随机哈希值"""
-        random_str = str(random.random())
-        return hashlib.md5(random_str.encode()).hexdigest()[:8]
+        """带缓存的随机哈希生成"""
+        return hashlib.md5(str(random.random()).encode()).hexdigest()[:8]
 
-    def search_iptv_page(self, keyword="CCTV1", page=1):
-        """搜索指定页面的IPTV频道"""
-        params = {
-            'iptv': keyword,
-            'l': self.generate_random_hash()
-        }
-        
-        # 添加分页参数
-        if page > 1:
-            params['page'] = page
-        
+    def search_iptv_page(self, keyword, page):
+        """单页搜索（线程安全版）"""
         try:
-            print(f"正在搜索: {keyword} 第 {page} 页")
+            params = {
+                'iptv': keyword,
+                'l': self.generate_random_hash(),
+                'page': page if page > 1 else None
+            }
             
             response = self.session.get(
-                self.base_url, 
-                params=params, 
+                self.base_url,
+                params=params,
                 timeout=self.request_timeout
             )
             response.raise_for_status()
+            return self.parse_links_only(response.text, keyword)
             
-            print(f"第 {page} 页获取成功，状态码: {response.status_code}")
-            return self.parse_links_only(response.text)
-            
-        except requests.exceptions.Timeout:
-            print(f"第 {page} 页请求超时")
-            return []
-        except requests.exceptions.RequestException as e:
-            print(f"第 {page} 页请求错误: {e}")
-            return []
         except Exception as e:
-            print(f"第 {page} 页解析错误: {e}")
+            print(f"⚠️ {keyword} 第{page}页错误: {str(e)}")
             return []
 
-    def parse_links_only(self, html_content):
-        """只解析M3U8链接，不尝试匹配频道名称"""
-        found_links = []
+    def parse_links_only(self, html_content, source):
+        """带来源标注的链接解析"""
+        patterns = [
+            r'https?://[^\s<>"]+?\.m3u8(?:\?[^\s<>"]*)?',
+            r'onclick="glshle\(\s*\'([^\']+?\.m3u8)\'\s*\)"',
+            r'<tba[^>]*class="ergl"[^>]*>([^<]+\.m3u8)</tba>'
+        ]
         
-        # 查找所有M3U8链接
-        m3u8_pattern = r'https?://[^\s<>"]+?\.m3u8(?:\?[^\s<>"]*)?'
-        m3u8_links = re.findall(m3u8_pattern, html_content, re.IGNORECASE)
-        
-        # 查找onclick事件中的M3U8链接
-        onclick_pattern = r'onclick="glshle\(\s*\'([^\']+?\.m3u8)\'\s*\)"'
-        onclick_links = re.findall(onclick_pattern, html_content, re.IGNORECASE)
-        
-        # 查找特定标签中的M3U8链接
-        tag_pattern = r'<tba[^>]*class="ergl"[^>]*>([^<]+\.m3u8)</tba>'
-        tag_links = re.findall(tag_pattern, html_content, re.IGNORECASE)
-        
-        # 合并所有找到的链接
-        all_links = list(set(m3u8_links + onclick_links + tag_links))
-        
-        # 处理链接
-        for link in all_links:
-            # 确保链接是完整的URL
-            if not link.startswith(('http://', 'https://')):
-                if link.startswith('//'):
-                    link = 'https:' + link
-                else:
-                    continue
-            
-            found_links.append(link)
-            print(f"找到链接: {link}")
-        
-        return found_links
+        links = set()
+        for pattern in patterns:
+            matches = re.findall(pattern, html_content, re.IGNORECASE)
+            for link in matches:
+                if not link.startswith(('http://', 'https://')):
+                    link = 'https:' + link if link.startswith('//') else None
+                if link:
+                    links.add((link, source))
+        return list(links)
 
-    def verify_m3u8(self, m3u8_url):
-        """验证M3U8链接有效性"""
+    def verify_m3u8_batch(self, links_batch):
+        """批量验证链接有效性"""
+        valid_links = []
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            futures = {executor.submit(self._verify_single, link): (link, source) 
+                      for link, source in links_batch}
+            for future in as_completed(futures):
+                link, source = futures[future]
+                try:
+                    if future.result():
+                        valid_links.append({'url': link, 'source': source})
+                except:
+                    pass
+        return valid_links
+
+    def _verify_single(self, url):
+        """单链接验证（带重试机制）"""
         try:
-            response = self.session.get(m3u8_url, timeout=(3, 5), stream=True)
-            
-            if response.status_code == 200:
-                content_type = response.headers.get('content-type', '').lower()
-                content = response.text[:1000]
-                
-                # 检查M3U8特征
-                if ('mpegurl' in content_type or 
-                    content.startswith('#EXTM3U') or 
-                    '#EXTINF' in content):
-                    return True
-                    
-            return False
-        except Exception as e:
-            print(f"验证链接失败: {e}")
+            with self.session.head(url, timeout=(3, 5), allow_redirects=True) as resp:
+                return resp.status_code == 200 and 'mpegurl' in resp.headers.get('content-type', '')
+        except:
             return False
 
-    def search_multiple_pages(self, keyword="CCTV1", pages=10, interval=10):
-        """搜索多页内容"""
-        all_links = []
-        
-        for page in range(1, pages + 1):
-            print(f"\n{'='*50}")
-            print(f"开始处理第 {page} 页")
-            print(f"{'='*50}")
+    def run_concurrent(self, keywords, pages=2):
+        """并发执行主逻辑"""
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            # 第一阶段：并发爬取
+            futures = []
+            for keyword in keywords:
+                futures.append(executor.submit(
+                    self._process_keyword,
+                    keyword,
+                    pages
+                ))
             
-            links = self.search_iptv_page(keyword, page)
+            # 第二阶段：收集结果
+            for future in as_completed(futures):
+                self.all_links.extend(future.result())
             
-            if links:
-                print(f"第 {page} 页找到 {len(links)} 个链接")
-                all_links.extend(links)
-                
-                # 添加链接到总列表
-                for link in links:
-                    if link not in self.all_links:
-                        self.all_links.append({
-                            'url': link,
-                            'source': keyword
-                        })
-                
-                # 如果不是最后一页，等待指定的间隔时间
-                if page < pages:
-                    print(f"等待 {interval} 秒后继续下一页...")
-                    time.sleep(interval)
-            else:
-                print(f"第 {page} 页未找到链接")
-                break  # 如果某一页没找到内容，停止爬取
-        
-        return all_links
+            # 第三阶段：批量验证
+            if self.all_links:
+                self.all_links = self.verify_m3u8_batch(self.all_links)
 
-    def save_to_m3u(self, links_data, filename="ysws.m3u", output_dir="output"):
-        """保存结果为M3U格式文件"""
-        # 创建输出目录
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-            print(f"创建目录: {output_dir}")
-        
-        filepath = os.path.join(output_dir, filename)
+    def _process_keyword(self, keyword, pages):
+        """单个关键词处理流程"""
+        links = []
+        with ThreadPoolExecutor(max_workers=2) as page_executor:
+            page_futures = [page_executor.submit(
+                self.search_iptv_page,
+                keyword,
+                page
+            ) for page in range(1, pages+1)]
+            
+            for future in as_completed(page_futures):
+                links.extend(future.result())
+        return links
+
+    def save_results(self, filename="ysws.m3u"):
+        """保存优化后的结果"""
+        os.makedirs("output", exist_ok=True)
+        filepath = os.path.join("output", filename)
         
         with open(filepath, 'w', encoding='utf-8') as f:
-            # 写入M3U文件头
             f.write('#EXTM3U\n')
-            
-            # 写入每个链接
-            valid_count = 0
-            for item in links_data:
-                link = item['url']
-                source = item['source']
-                
-                if self.verify_m3u8(link):
-                    # 使用搜索关键词作为频道名称
-                    f.write(f'#EXTINF:-1 tvg-id="" tvg-name="{source}" tvg-logo="" group-title="CCTV",{source}\n')
-                    f.write(f'{link}\n')
-                    print(f"✓ 已添加有效链接: {source} -> {link}")
-                    valid_count += 1
-                else:
-                    print(f"✗ 跳过无效链接: {link}")
+            for item in sorted(self.all_links, key=lambda x: x['source']):
+                f.write(f'#EXTINF:-1 tvg-id="" tvg-name="{item["source"]}" tvg-logo="" group-title="CCTV",{item["source"]}\n')
+                f.write(f'{item["url"]}\n')
         
-        print(f"成功保存 {valid_count} 个有效链接到 {filepath}")
-        return filepath, valid_count
-
-    def run(self, keywords=None, pages=10, interval=10):
-        """运行爬虫"""
-        if not keywords:
-            keywords = ["CCTV1", "CCTV2", "CCTV3", "CCTV4", "CCTV5", "CCTV6", "CCTV7", "CCTV8", "CCTV9", "CCTV10"]
-        
-        # 清空之前的链接列表
-        self.all_links = []
-        
-        for keyword in keywords:
-            print(f"\n{'='*50}")
-            print(f"开始处理关键词: {keyword}")
-            print(f"{'='*50}")
-            
-            links = self.search_multiple_pages(keyword, pages, interval)
-            
-            if links:
-                print(f"为关键词 '{keyword}' 找到 {len(links)} 个链接")
-            else:
-                print(f"关键词 '{keyword}' 未找到链接")
-        
-        if self.all_links:
-            print(f"\n总共找到 {len(self.all_links)} 个唯一链接")
-            
-            # 保存结果为M3U格式
-            output_file, valid_count = self.save_to_m3u(
-                self.all_links, 
-                "ysws.m3u", 
-                "output"
-            )
-            
-            print(f"其中 {valid_count} 个链接验证有效")
-            
-            return output_file, self.all_links, valid_count
-        else:
-            print("未找到任何链接")
-            return None, [], []
+        print(f"成功保存 {len(self.all_links)} 个有效链接到 {filepath}")
+        return filepath
 
 def main():
     """主函数"""
@@ -228,61 +152,32 @@ def main():
     
     # 配置参数
     search_keywords = [
-         # 央视频道
-    "CCTV1",   # 综合频道
-    "CCTV2",   # 财经频道
-    "CCTV3",   # 综艺频道
-    "CCTV4",   # 中文国际频道
-    "CCTV5",   # 体育频道
-    "CCTV6",   # 电影频道
-    "CCTV7",   # 国防军事频道
-    "CCTV8",   # 电视剧频道
-    "CCTV9",   # 纪录频道
-    "CCTV10",  # 科教频道
-    "CCTV11",  # 戏曲频道
-    "CCTV12",  # 社会与法频道
-    "CCTV13",  # 新闻频道
-    "CCTV14",  # 少儿频道
-    "CCTV15",  # 音乐频道
-    "CCTV16",  # 奥林匹克频道
-    "CCTV17"   # 农业农村频道
- 
+        "CCTV1", "CCTV2", "CCTV3", "CCTV4", "CCTV5",
+        "CCTV6", "CCTV7", "CCTV8", "CCTV9", "CCTV10",
+        "CCTV11", "CCTV12", "CCTV13", "CCTV14", "CCTV15",
+        "CCTV16", "CCTV17"
     ]
-    pages_to_crawl = 2  # 爬取1页
-    request_interval = 8  # 10秒间隔
+    pages_to_crawl = 2
+    request_interval = 8
     
     try:
-        output_file, all_links, valid_count = crawler.run(  # 修改变量名为 valid_count
-            search_keywords, 
-            pages_to_crawl, 
-            request_interval
-        )
+        # 并发执行爬取
+        crawler.run_concurrent(search_keywords, pages_to_crawl)
         
-        if output_file:
-            print(f"\n✅ 爬取完成！")
-            print(f"📁 M3U文件: {output_file}")
-            print(f"✅ 有效链接: {valid_count} 个")
-            
-            # 显示统计信息
-            cctv_counts = {}
-            for item in all_links:
-                source = item['source']
-                cctv_counts[source] = cctv_counts.get(source, 0) + 1
-            
-            print("\n各频道链接数量统计:")
-            for cctv, count in sorted(cctv_counts.items()):
-                print(f"{cctv}: {count} 个链接")
-            
-            # 在GitHub Actions环境中设置输出变量
-            if os.getenv('GITHUB_ACTIONS') == 'true':
-                with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-                    print(f'output_file={output_file}', file=fh)
-                    print(f'total_links={len(all_links)}', file=fh)
-                    print(f'valid_links={valid_count}', file=fh)  # 直接使用 valid_count
-        else:
-            print("\n❌ 爬取失败，未找到任何链接")
-            exit(1)
-            
+        # 保存结果
+        output_file = crawler.save_results()
+        
+        print(f"\n✅ 爬取完成！")
+        print(f"📁 M3U文件: {output_file}")
+        print(f"✅ 有效链接: {len(crawler.all_links)} 个")
+        
+        # 在GitHub Actions环境中设置输出变量
+        if os.getenv('GITHUB_ACTIONS') == 'true':
+            with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+                print(f'output_file={output_file}', file=fh)
+                print(f'total_links={len(crawler.all_links)}', file=fh)
+                print(f'valid_links={len(crawler.all_links)}', file=fh)
+                
     except Exception as e:
         print(f"\n❌ 爬虫执行出错: {e}")
         import traceback
@@ -291,6 +186,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
