@@ -228,32 +228,30 @@ def main():
     
     # 配置参数
     search_keywords = [
-    # 央视频道
-    "CCTV1",   # 综合频道
-    "CCTV2",   # 财经频道
-    "CCTV3",   # 综艺频道
-    "CCTV4",   # 中文国际频道
-    "CCTV5",   # 体育频道
-    "CCTV6",   # 电影频道
-    "CCTV7",   # 国防军事频道
-    "CCTV8",   # 电视剧频道
-    "CCTV9",   # 纪录频道
-    "CCTV10",  # 科教频道
-    "CCTV11",  # 戏曲频道
-    "CCTV12",  # 社会与法频道
-    "CCTV13",  # 新闻频道
-    "CCTV14",  # 少儿频道
-    "CCTV15",  # 音乐频道
-    "CCTV16",  # 奥林匹克频道
-    "CCTV17"  # 农业农村频道
-
-   
-]
-    pages_to_crawl = 3  # 爬取5页
-    request_interval = 10  # 20秒间隔
+        # 央视频道
+        "CCTV1",   # 综合频道
+        "CCTV2",   # 财经频道
+        "CCTV3",   # 综艺频道
+        "CCTV4",   # 中文国际频道
+        "CCTV5",   # 体育频道
+        "CCTV6",   # 电影频道
+        "CCTV7",   # 国防军事频道
+        "CCTV8",   # 电视剧频道
+        "CCTV9",   # 纪录频道
+        "CCTV10",  # 科教频道
+        "CCTV11",  # 戏曲频道
+        "CCTV12",  # 社会与法频道
+        "CCTV13",  # 新闻频道
+        "CCTV14",  # 少儿频道
+        "CCTV15",  # 音乐频道
+        "CCTV16",  # 奥林匹克频道
+        "CCTV17"   # 农业农村频道
+    ]
+    pages_to_crawl = 1  # 爬取1页
+    request_interval = 10  # 10秒间隔
     
     try:
-        output_file, all_links, valid_links = crawler.run(
+        output_file, all_links, valid_count = crawler.run(  # 修改变量名为 valid_count
             search_keywords, 
             pages_to_crawl, 
             request_interval
@@ -262,9 +260,7 @@ def main():
         if output_file:
             print(f"\n✅ 爬取完成！")
             print(f"📁 M3U文件: {output_file}")
-            print(f"✅ 有效链接: {valid_links} 个")  # 直接使用数值
-            print(f"其中 {valid_links} 个链接验证有效")
-
+            print(f"✅ 有效链接: {valid_count} 个")
             
             # 显示统计信息
             cctv_counts = {}
@@ -281,7 +277,7 @@ def main():
                 with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
                     print(f'output_file={output_file}', file=fh)
                     print(f'total_links={len(all_links)}', file=fh)
-                    print(f'valid_links={len(valid_links)}', file=fh)
+                    print(f'valid_links={valid_count}', file=fh)  # 直接使用 valid_count
         else:
             print("\n❌ 爬取失败，未找到任何链接")
             exit(1)
@@ -295,5 +291,6 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
