@@ -151,7 +151,7 @@ class TonkiangCrawler:
         
         return all_links
 
-    def save_to_m3u(self, links_data, filename="ysws.m3u", output_dir="../github"):
+    def save_to_m3u(self, links_data, filename="ysws.m3u", output_dir="github"):
         """保存结果为M3U格式文件"""
         # 创建输出目录
         if not os.path.exists(output_dir):
@@ -274,3 +274,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
