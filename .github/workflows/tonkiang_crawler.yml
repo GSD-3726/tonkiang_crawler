@@ -65,7 +65,7 @@ jobs:
       uses: actions/github-script@v5
       with:
         script: |
-          github.issues.create({
+          await github.rest.issues.create({  # 添加 .rest 并添加 await
             owner: context.repo.owner,
             repo: context.repo.repo,
             title: "✅ CCTV IPTV爬虫执行成功",
@@ -77,7 +77,7 @@ jobs:
       uses: actions/github-script@v5
       with:
         script: |
-          github.issues.create({
+          await github.rest.issues.create({  # 添加 .rest 并添加 await
             owner: context.repo.owner,
             repo: context.repo.repo,
             title: "🚨 CCTV IPTV爬虫执行失败",
