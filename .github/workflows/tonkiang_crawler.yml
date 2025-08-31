@@ -15,6 +15,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -26,7 +28,7 @@ jobs:
         pip install requests
 
     - name: Create output directory
-      run: mkdir -p output  # 新增目录创建步骤
+      run: mkdir -p output
 
     - name: Run crawler
       id: crawler
@@ -34,23 +36,51 @@ jobs:
         python scripts/tonkiang_crawler.py
       env:
         GITHUB_ACTIONS: true
-        OUTPUT_DIR: "output"  # 新增环境变量传递输出目录
+        OUTPUT_DIR: "output"
 
     - name: Configure Git
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
 
-    - name: Commit and push if changed
+    - name: Force sync with remote
       run: |
-        if [ -f "output/ysws.m3u" ]; then  # 修改文件路径
-          git add output/ysws.m3u         # 修改添加路径
-          git commit -m "Update IPTV list - $(date +'%Y-%m-%d %H:%M')"
-          git push origin HEAD:main
+        git fetch origin main
+        git reset --hard origin/main
+        git clean -fdx
+
+    - name: Check file changes
+      id: check_changes
+      run: |
+        if [ -f "output/ysws.m3u" ]; then
+          # 生成新文件哈希
+          NEW_HASH=$(md5sum output/ysws.m3u | awk '{ print $1 }')
+          
+          # 获取远程文件哈希（如果存在）
+          if git show main:output/ysws.m3u >/dev/null 2>&1; then
+            REMOTE_HASH=$(git show main:output/ysws.m3u | md5sum | awk '{ print $1 }')
+          else
+            REMOTE_HASH="null"
+          fi
+
+          # 比较哈希值
+          if [ "$NEW_HASH" != "$REMOTE_HASH" ]; then
+            echo "::set-output name=has_changes::true"
+            echo "检测到文件变化，准备提交..."
+          else
+            echo "文件内容未变化，跳过提交"
+          fi
         else
-          echo "M3U文件未生成，请检查爬虫日志"
+          echo "M3U文件未生成"
           exit 1
         fi
+
+    - name: Commit and force push if changed
+      if: steps.check_changes.outputs.has_changes == 'true'
+      run: |
+        git add output/ysws.m3u
+        git commit -m "Update IPTV list - $(date +'%Y-%m-%d %H:%M')"
+        git push --force-with-lease origin main
 
     - name: Send notification on success
       if: success()
