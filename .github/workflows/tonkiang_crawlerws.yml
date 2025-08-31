@@ -1,17 +1,21 @@
-name: WSTV Crawler 
+name: WS TV Crawler
 
 on:
-  schedule:
-    - cron: '0 0 * * *'
   workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'
+  push:
+    branches: [ main ]
+    paths:
+      - 'scripts/tonkiang_crawler.py'
 
 jobs:
-  crawl-iptv:
+  crawl-wstv:
     runs-on: ubuntu-latest
-    permissions:
+    timeout-minutes: 30
+    permissions: 
       contents: write
-      issues: write
-
+    
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -23,57 +27,33 @@ jobs:
 
     - name: Install dependencies
       run: |
+        python -m pip install --upgrade pip
         pip install requests
 
-    - name: Create output directory
-      run: mkdir -p output  # 新增目录创建步骤
-
-    - name: Run crawler
+    - name: Run WS TV crawler
       id: crawler
       run: |
-        python scripts/tonkiang_crawlerws.py
+        python scripts/tonkiang_crawler.py
       env:
         GITHUB_ACTIONS: true
-        OUTPUT_DIR: "output"  # 新增环境变量传递输出目录
 
-    - name: Configure Git
+    - name: Commit and push results
       run: |
-        git config --global user.email "action@github.com"
-        git config --global user.name "GitHub Action"
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add output/wstv.m3u
+        git commit -m "Auto-update: WS TV M3U results $(date +'%Y-%m-%d %H:%M')" || echo "No changes to commit"
+        git push origin HEAD:main || echo "Nothing to push"
 
-    - name: Commit and push if changed
+    - name: Upload results as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: wstv-m3u
+        path: output/wstv.m3u
+
+    - name: Show results summary
       run: |
-        if [ -f "output/wsws.m3u" ]; then  # 修改文件路径
-          git add output/wsws.m3u         # 修改添加路径
-          git commit -m "Update IPTV list - $(date +'%Y-%m-%d %H:%M')"
-          git push origin HEAD:main
-        else
-          echo "M3U文件未生成，请检查爬虫日志"
-          exit 1
-        fi
-
-    - name: Send notification on success
-      if: success()
-      uses: actions/github-script@v5
-      with:
-        script: |
-          await github.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: "✅ IPTV列表更新成功",
-            body: `成功更新IPTV列表，包含 ${process.env.VALID_LINKS} 个有效链接`
-          })
-      env:
-        VALID_LINKS: ${{ steps.crawler.outputs.valid_links }}
-
-    - name: Send notification on failure
-      if: failure()
-      uses: actions/github-script@v5
-      with:
-        script: |
-          await github.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: "🚨 IPTV列表更新失败",
-            body: "请检查[工作流日志](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
-          })
+        echo "爬取完成!"
+        echo "总链接数: ${{ steps.crawler.outputs.total_links }}"
+        echo "有效链接: ${{ steps.crawler.outputs.valid_links }}"
+        echo "M3U文件: ${{ steps.crawler.outputs.output_file }}"
