@@ -8,7 +8,7 @@ import re
 import os
 import random
 import hashlib
-import time  # 新增导入time模块
+import time
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import lru_cache
@@ -28,6 +28,12 @@ class TonkiangCrawler:
         self.request_timeout = (5, 15)
         self.all_links = []
         self.lock = threading.Lock()
+        self.print_lock = threading.Lock()  # 用于线程安全的打印
+
+    def print_with_lock(self, message):
+        """线程安全的打印函数"""
+        with self.print_lock:
+            print(message)
 
     @lru_cache(maxsize=100)
     def generate_random_hash(self):
@@ -38,7 +44,9 @@ class TonkiangCrawler:
         """单页搜索（线程安全版）"""
         try:
             # 添加随机等待时间（1-3秒）
-            time.sleep(random.uniform(1, 3))
+            wait_time = random.uniform(1, 3)
+            self.print_with_lock(f"等待 {wait_time:.2f} 秒后开始搜索: {keyword} 第 {page} 页")
+            time.sleep(wait_time)
             
             params = {
                 'iptv': keyword,
@@ -46,20 +54,26 @@ class TonkiangCrawler:
                 'page': page if page > 1 else None
             }
             
+            self.print_with_lock(f"正在搜索: {keyword} 第 {page} 页")
+            
             response = self.session.get(
                 self.base_url,
                 params=params,
                 timeout=self.request_timeout
             )
             response.raise_for_status()
+            
+            self.print_with_lock(f"第 {page} 页获取成功，状态码: {response.status_code}")
             return self.parse_links_only(response.text, keyword)
             
         except Exception as e:
-            print(f"⚠️ {keyword} 第{page}页错误: {str(e)}")
+            self.print_with_lock(f"⚠️ {keyword} 第{page}页错误: {str(e)}")
             return []
 
     def parse_links_only(self, html_content, source):
         """带来源标注的链接解析"""
+        self.print_with_lock(f"开始解析 {source} 的页面内容")
+        
         patterns = [
             r'https?://[^\s<>"]+?\.m3u8(?:\?[^\s<>"]*)?',
             r'onclick="glshle\(\s*\'([^\']+?\.m3u8)\'\s*\)"',
@@ -74,10 +88,14 @@ class TonkiangCrawler:
                     link = 'https:' + link if link.startswith('//') else None
                 if link:
                     links.add((link, source))
+                    self.print_with_lock(f"找到链接: {link}")
+        
+        self.print_with_lock(f"为 {source} 找到 {len(links)} 个链接")
         return list(links)
 
     def verify_m3u8_batch(self, links_batch):
         """批量验证链接有效性"""
+        self.print_with_lock(f"开始批量验证 {len(links_batch)} 个链接")
         valid_links = []
         with ThreadPoolExecutor(max_workers=5) as executor:
             futures = {executor.submit(self._verify_single, link): (link, source) 
@@ -87,15 +105,21 @@ class TonkiangCrawler:
                 try:
                     if future.result():
                         valid_links.append({'url': link, 'source': source})
-                except:
-                    pass
+                        self.print_with_lock(f"✓ 验证通过: {link}")
+                    else:
+                        self.print_with_lock(f"✗ 验证失败: {link}")
+                except Exception as e:
+                    self.print_with_lock(f"验证链接时出错 {link}: {e}")
+        
+        self.print_with_lock(f"批量验证完成，有效链接: {len(valid_links)} 个")
         return valid_links
 
     def _verify_single(self, url):
         """单链接验证（带重试机制）"""
         try:
             # 添加较短等待时间（0.5-1.5秒）
-            time.sleep(random.uniform(0.5, 1.5))
+            wait_time = random.uniform(0.5, 1.5)
+            time.sleep(wait_time)
             
             with self.session.head(url, timeout=(3, 5), allow_redirects=True) as resp:
                 return resp.status_code == 200 and 'mpegurl' in resp.headers.get('content-type', '')
@@ -104,13 +128,19 @@ class TonkiangCrawler:
 
     def run_concurrent(self, keywords, pages=2):
         """并发执行主逻辑"""
+        self.print_with_lock(f"\n{'='*50}")
+        self.print_with_lock("开始并发爬取")
+        self.print_with_lock(f"{'='*50}")
+        
         with ThreadPoolExecutor(max_workers=3) as executor:
             # 第一阶段：并发爬取
             futures = []
             for keyword in keywords:
                 # 添加关键词间的延迟
                 if len(futures) > 0:
-                    time.sleep(random.uniform(2, 5))
+                    delay = random.uniform(2, 5)
+                    self.print_with_lock(f"等待 {delay:.2f} 秒后处理下一个关键词")
+                    time.sleep(delay)
                     
                 futures.append(executor.submit(
                     self._process_keyword,
@@ -120,14 +150,20 @@ class TonkiangCrawler:
             
             # 第二阶段：收集结果
             for future in as_completed(futures):
-                self.all_links.extend(future.result())
+                result = future.result()
+                self.all_links.extend(result)
+                self.print_with_lock(f"完成一个关键词的处理，找到 {len(result)} 个链接")
             
             # 第三阶段：批量验证
             if self.all_links:
-                self.all_links = self.verify_m3u8_batch(self.all_links)
+                self.print_with_lock(f"\n开始验证所有找到的 {len(self.all_links)} 个链接")
+                self.all_links = self.verify_m3u8_batch([(item['url'], item['source']) for item in self.all_links])
+            else:
+                self.print_with_lock("未找到任何链接，跳过验证阶段")
 
     def _process_keyword(self, keyword, pages):
         """单个关键词处理流程"""
+        self.print_with_lock(f"\n开始处理关键词: {keyword}")
         links = []
         with ThreadPoolExecutor(max_workers=2) as page_executor:
             page_futures = [page_executor.submit(
@@ -138,10 +174,13 @@ class TonkiangCrawler:
             
             for future in as_completed(page_futures):
                 links.extend(future.result())
+        
+        self.print_with_lock(f"关键词 {keyword} 处理完成，共找到 {len(links)} 个链接")
         return links
 
     def save_results(self, filename="ysws.m3u"):
         """保存优化后的结果"""
+        self.print_with_lock(f"\n开始保存结果到文件: {filename}")
         os.makedirs("output", exist_ok=True)
         filepath = os.path.join("output", filename)
         
@@ -151,7 +190,7 @@ class TonkiangCrawler:
                 f.write(f'#EXTINF:-1 tvg-id="" tvg-name="{item["source"]}" tvg-logo="" group-title="CCTV",{item["source"]}\n')
                 f.write(f'{item["url"]}\n')
         
-        print(f"成功保存 {len(self.all_links)} 个有效链接到 {filepath}")
+        self.print_with_lock(f"成功保存 {len(self.all_links)} 个有效链接到 {filepath}")
         return filepath
 
 def main():
@@ -180,6 +219,16 @@ def main():
         print(f"\n✅ 爬取完成！")
         print(f"📁 M3U文件: {output_file}")
         print(f"✅ 有效链接: {len(crawler.all_links)} 个")
+        
+        # 显示统计信息
+        tv_counts = {}
+        for item in crawler.all_links:
+            source = item['source']
+            tv_counts[source] = tv_counts.get(source, 0) + 1
+        
+        print("\n各频道链接数量统计:")
+        for tv, count in sorted(tv_counts.items()):
+            print(f"{tv}: {count} 个链接")
         
         # 在GitHub Actions环境中设置输出变量
         if os.getenv('GITHUB_ACTIONS') == 'true':
