@@ -1,34 +1,24 @@
-name: CCTV Crawler 
+name: CCTV Crawler
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 4 * * *'
-  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'scripts/tonkiang_crawler.py'
 
 jobs:
-  crawl-iptv:
+  crawl-wstv:
     runs-on: ubuntu-latest
-    permissions:
+    timeout-minutes: 30
+    permissions: 
       contents: write
-      # 可以移除 issues: write 权限，因为我们不再创建 Issue
-      contents: write
-
+    
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-
-    - name: Configure Git
-      run: |
-        git config --global user.email "action@github.com"
-        git config --global user.name "GitHub Action"
-
-    - name: Force sync with remote
-      run: |
-        git fetch origin main
-        git reset --hard origin/main
-        git clean -fdx
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -37,51 +27,33 @@ jobs:
 
     - name: Install dependencies
       run: |
+        python -m pip install --upgrade pip
         pip install requests
 
-    - name: Create output directory
-      run: mkdir -p output
-
-    - name: Run crawler
+    - name: Run WSTV crawler
       id: crawler
       run: |
         python scripts/tonkiang_crawler.py
       env:
         GITHUB_ACTIONS: true
-        OUTPUT_DIR: "output"
 
-    - name: Check file changes
-      id: check_changes
+    - name: Commit and push results
       run: |
-        if [ -f "output/ysws.m3u" ]; then
-          # 生成新文件哈希
-          NEW_HASH=$(md5sum output/ysws.m3u | awk '{ print $1 }')
-          
-          # 获取远程文件哈希（如果存在）
-          if git show origin/main:output/ysws.m3u >/dev/null 2>&1; then
-            REMOTE_HASH=$(git show origin/main:output/ysws.m3u | md5sum | awk '{ print $1 }')
-          else
-            REMOTE_HASH="null"
-          fi
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add output/wstv.m3u
+        git commit -m "Auto-update: WS TV M3U results $(date +'%Y-%m-%d %H:%M')" || echo "No changes to commit"
+        git push origin HEAD:main || echo "Nothing to push"
 
-          # 比较哈希值
-          if [ "$NEW_HASH" != "$REMOTE_HASH" ]; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-            echo "检测到文件变化，准备提交..."
-          else
-            echo "文件内容未变化，跳过提交"
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          fi
-        else
-          echo "M3U文件未生成"
-          exit 1
-        fi
+    - name: Upload results as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: wstv-m3u
+        path: output/wstv.m3u
 
-    - name: Commit and push if changed
-      if: steps.check_changes.outputs.has_changes == 'true'
+    - name: Show results summary
       run: |
-        git add output/ysws.m3u
-        git commit -m "Update IPTV list - $(date +'%Y-%m-%d %H:%M')"
-        git push origin main
-
-    # 已删除创建 Issue 的步骤
+        echo "爬取完成!"
+        echo "总链接数: ${{ steps.crawler.outputs.total_links }}"
+        echo "有效链接: ${{ steps.crawler.outputs.valid_links }}"
+        echo "M3U文件: ${{ steps.crawler.outputs.output_file }}"
