@@ -257,7 +257,7 @@ def main():
     
     # 配置参数 - 卫视频道
     search_keywords = [
-         "安徽卫视",   # 安徽广播电视台综合频道
+    "安徽卫视",   # 安徽广播电视台综合频道
     "北京卫视",   # 北京广播电视台综合频道
     "重庆卫视",   # 重庆广播电视台综合频道
     "东南卫视",   # 福建广播影视集团综合频道
@@ -291,8 +291,8 @@ def main():
     "嘉佳卡通卫视", # 广东广播电视台少儿频道
     "优漫卡通卫视"  # 江苏广播电视台动漫频道
     ]
-    pages_to_crawl = 4  # 爬取4页
-    request_interval = 10  # 8秒间隔
+    pages_to_crawl = 6  # 爬取6页
+    request_interval = 8  # 8秒间隔
     
     try:
         output_file, all_links, valid_count = crawler.run(
