@@ -10,7 +10,7 @@ on:
       - 'scripts/tonkiang_crawler.py'
 
 jobs:
-  crawl-wstv:
+  crawl-ysws:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions: 
