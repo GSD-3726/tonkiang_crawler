@@ -8,6 +8,7 @@ import re
 import os
 import random
 import hashlib
+import time  # 新增导入time模块
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import lru_cache
@@ -36,6 +37,9 @@ class TonkiangCrawler:
     def search_iptv_page(self, keyword, page):
         """单页搜索（线程安全版）"""
         try:
+            # 添加随机等待时间（1-3秒）
+            time.sleep(random.uniform(1, 3))
+            
             params = {
                 'iptv': keyword,
                 'l': self.generate_random_hash(),
@@ -90,6 +94,9 @@ class TonkiangCrawler:
     def _verify_single(self, url):
         """单链接验证（带重试机制）"""
         try:
+            # 添加较短等待时间（0.5-1.5秒）
+            time.sleep(random.uniform(0.5, 1.5))
+            
             with self.session.head(url, timeout=(3, 5), allow_redirects=True) as resp:
                 return resp.status_code == 200 and 'mpegurl' in resp.headers.get('content-type', '')
         except:
@@ -101,6 +108,10 @@ class TonkiangCrawler:
             # 第一阶段：并发爬取
             futures = []
             for keyword in keywords:
+                # 添加关键词间的延迟
+                if len(futures) > 0:
+                    time.sleep(random.uniform(2, 5))
+                    
                 futures.append(executor.submit(
                     self._process_keyword,
                     keyword,
@@ -185,4 +196,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
