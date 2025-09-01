@@ -158,7 +158,6 @@ def main():
         "CCTV16", "CCTV17"
     ]
     pages_to_crawl = 4
-    request_interval = 8
     
     try:
         # 并发执行爬取
@@ -186,4 +185,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
