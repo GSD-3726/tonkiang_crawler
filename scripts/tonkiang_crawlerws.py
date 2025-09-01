@@ -291,8 +291,8 @@ def main():
     "嘉佳卡通卫视", # 广东广播电视台少儿频道
     "优漫卡通卫视"  # 江苏广播电视台动漫频道
     ]
-    pages_to_crawl = 3  # 爬取2页
-    request_interval = 8  # 8秒间隔
+    pages_to_crawl = 4  # 爬取4页
+    request_interval = 10  # 8秒间隔
     
     try:
         output_file, all_links, valid_count = crawler.run(
