@@ -30,7 +30,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests
 
-    - name: Run WSTV crawler
+    - name: Run CCTV crawler
       id: crawler
       run: |
         python scripts/tonkiang_crawler.py
@@ -41,15 +41,15 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add output/wstv.m3u
+        git add output/ysws.m3u
         git commit -m "Auto-update: WS TV M3U results $(date +'%Y-%m-%d %H:%M')" || echo "No changes to commit"
         git push origin HEAD:main || echo "Nothing to push"
 
     - name: Upload results as artifact
       uses: actions/upload-artifact@v4
       with:
-        name: wstv-m3u
-        path: output/wstv.m3u
+        name: ysws-m3u
+        path: output/ysws.m3u
 
     - name: Show results summary
       run: |
