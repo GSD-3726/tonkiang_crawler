@@ -117,8 +117,19 @@ class TonkiangCrawler:
             wait_time = random.uniform(0.5, 1.5)
             time.sleep(wait_time)
             
-            with self.session.head(url, timeout=(3, 5), allow_redirects=True) as resp:
-                return resp.status_code == 200 and 'mpegurl' in resp.headers.get('content-type', '')
+            # 使用GET而不是HEAD，因为有些服务器可能不支持HEAD或返回不同的内容类型
+            with self.session.get(url, timeout=(3, 5), stream=True) as resp:
+                if resp.status_code != 200:
+                    return False
+                
+                # 检查内容类型或内容本身
+                content_type = resp.headers.get('content-type', '').lower()
+                if 'mpegurl' in content_type or 'application/vnd.apple.mpegurl' in content_type:
+                    return True
+                
+                # 如果不是预期的内容类型，检查内容前几个字符
+                content_start = resp.raw.read(10).decode('utf-8', errors='ignore')
+                return content_start.startswith('#EXTM3U')
         except:
             return False
 
@@ -190,10 +201,7 @@ def main():
     crawler = TonkiangCrawler()
     
     search_keywords = [
-        "CCTV1", "CCTV2", "CCTV3", "CCTV4", "CCTV5",
-        "CCTV6", "CCTV7", "CCTV8", "CCTV9", "CCTV10",
-        "CCTV11", "CCTV12", "CCTV13", "CCTV14", "CCTV15",
-        "CCTV16", "CCTV17"
+        "CCTV1", "CCTV2"
     ]
     pages_to_crawl = 5
     
