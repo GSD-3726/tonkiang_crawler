@@ -1,4 +1,4 @@
-name: CCTV Crawler
+name: CCTV Crawler 
 
 on:
   schedule:
@@ -22,6 +22,12 @@ jobs:
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
+
+    - name: Force sync with remote
+      run: |
+        git fetch origin main
+        git reset --hard origin/main
+        git clean -fdx
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -47,15 +53,23 @@ jobs:
       id: check_changes
       run: |
         if [ -f "output/ysws.m3u" ]; then
-          # 添加文件到暂存区以便比较
-          git add output/ysws.m3u
+          # 生成新文件哈希
+          NEW_HASH=$(md5sum output/ysws.m3u | awk '{ print $1 }')
           
-          # 检测工作区变化
-          if git diff --cached --quiet; then
-            echo "文件内容未变化，跳过提交"
+          # 获取远程文件哈希（如果存在）
+          if git show origin/main:output/ysws.m3u >/dev/null 2>&1; then
+            REMOTE_HASH=$(git show origin/main:output/ysws.m3u | md5sum | awk '{ print $1 }')
           else
-            echo "::set-output name=has_changes::true"
+            REMOTE_HASH="null"
+          fi
+
+          # 比较哈希值
+          if [ "$NEW_HASH" != "$REMOTE_HASH" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
             echo "检测到文件变化，准备提交..."
+          else
+            echo "文件内容未变化，跳过提交"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
           fi
         else
           echo "M3U文件未生成"
@@ -65,22 +79,22 @@ jobs:
     - name: Commit and push if changed
       if: steps.check_changes.outputs.has_changes == 'true'
       run: |
+        git add output/ysws.m3u
         git commit -m "Update IPTV list - $(date +'%Y-%m-%d %H:%M')"
         git push origin main
 
     - name: Send notification on success
-      if: success() && steps.check_changes.outputs.has_changes == 'true'
+      if: success()
       uses: actions/github-script@v5
       with:
         script: |
+          const validLinks = '${{ steps.crawler.outputs.valid_links }}' || '未知数量';
           await github.rest.issues.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
             title: "✅ IPTV列表更新成功",
-            body: `成功更新IPTV列表，包含 ${process.env.VALID_LINKS} 个有效链接`
+            body: `成功更新IPTV列表，包含 ${validLinks} 个有效链接`
           })
-      env:
-        VALID_LINKS: ${{ steps.crawler.outputs.valid_links }}
 
     - name: Send notification on failure
       if: failure()
@@ -91,5 +105,5 @@ jobs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             title: "🚨 IPTV列表更新失败",
-            body: "请检查[工作流日志](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+            body: `请检查[工作流日志](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`
           })
