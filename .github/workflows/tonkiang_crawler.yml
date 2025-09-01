@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      issues: write
+      # 可以移除 issues: write 权限，因为我们不再创建 Issue
+      contents: write
 
     steps:
     - name: Checkout repository
@@ -83,27 +84,4 @@ jobs:
         git commit -m "Update IPTV list - $(date +'%Y-%m-%d %H:%M')"
         git push origin main
 
-    - name: Send notification on success
-      if: success()
-      uses: actions/github-script@v5
-      with:
-        script: |
-          const validLinks = '${{ steps.crawler.outputs.valid_links }}' || '未知数量';
-          await github.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: "✅ IPTV列表更新成功",
-            body: `成功更新IPTV列表，包含 ${validLinks} 个有效链接`
-          })
-
-    - name: Send notification on failure
-      if: failure()
-      uses: actions/github-script@v5
-      with:
-        script: |
-          await github.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: "🚨 IPTV列表更新失败",
-            body: `请检查[工作流日志](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`
-          })
+    # 已删除创建 Issue 的步骤
