@@ -287,7 +287,7 @@ def main():
     "深圳卫视"   # 深圳广播电影电视集团综合频道
    
     ]
-    pages_to_crawl = 6  # 爬取5页
+    pages_to_crawl = 5  # 爬取5页
     request_interval = 8  # 8秒间隔
     
     try:
