@@ -91,48 +91,6 @@ class TonkiangCrawler:
         self.print_with_lock(f"为 {source} 找到 {len(links)} 个链接")
         return list(links)
 
-    def verify_m3u8_batch(self, links_batch):
-        """批量验证字典列表中的链接"""
-        self.print_with_lock(f"开始批量验证 {len(links_batch)} 个链接")
-        valid_links = []
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            # 直接使用字典中的url字段
-            futures = {executor.submit(self._verify_single, item['url']): item for item in links_batch}
-            for future in as_completed(futures):
-                original_item = futures[future]
-                try:
-                    if future.result():
-                        valid_links.append(original_item)
-                        self.print_with_lock(f"✓ 验证通过: {original_item['url']}")
-                    else:
-                        self.print_with_lock(f"✗ 验证失败: {original_item['url']}")
-                except Exception as e:
-                    self.print_with_lock(f"验证链接时出错 {original_item['url']}: {e}")
-        
-        self.print_with_lock(f"批量验证完成，有效链接: {len(valid_links)} 个")
-        return valid_links
-
-    def _verify_single(self, url):
-        try:
-            wait_time = random.uniform(0.5, 1.5)
-            time.sleep(wait_time)
-            
-            # 使用GET而不是HEAD，因为有些服务器可能不支持HEAD或返回不同的内容类型
-            with self.session.get(url, timeout=(3, 5), stream=True) as resp:
-                if resp.status_code != 200:
-                    return False
-                
-                # 检查内容类型或内容本身
-                content_type = resp.headers.get('content-type', '').lower()
-                if 'mpegurl' in content_type or 'application/vnd.apple.mpegurl' in content_type:
-                    return True
-                
-                # 如果不是预期的内容类型，检查内容前几个字符
-                content_start = resp.raw.read(10).decode('utf-8', errors='ignore')
-                return content_start.startswith('#EXTM3U')
-        except:
-            return False
-
     def run_concurrent(self, keywords, pages=2):
         self.print_with_lock(f"\n{'='*50}")
         self.print_with_lock("开始并发爬取")
@@ -157,12 +115,8 @@ class TonkiangCrawler:
                 self.all_links.extend(result)
                 self.print_with_lock(f"完成一个关键词的处理，找到 {len(result)} 个链接")
             
-            if self.all_links:
-                self.print_with_lock(f"\n开始验证所有找到的 {len(self.all_links)} 个链接")
-                # 直接传递字典列表进行验证
-                self.all_links = self.verify_m3u8_batch(self.all_links)
-            else:
-                self.print_with_lock("未找到任何链接，跳过验证阶段")
+            # 移除验证步骤，直接使用所有找到的链接
+            self.print_with_lock(f"\n跳过验证步骤，直接使用所有找到的 {len(self.all_links)} 个链接")
 
     def _process_keyword(self, keyword, pages):
         self.print_with_lock(f"\n开始处理关键词: {keyword}")
@@ -177,8 +131,16 @@ class TonkiangCrawler:
             for future in as_completed(page_futures):
                 links.extend(future.result())
         
-        self.print_with_lock(f"关键词 {keyword} 处理完成，共找到 {len(links)} 个链接")
-        return links
+        # 去重处理
+        seen_urls = set()
+        unique_links = []
+        for link in links:
+            if link['url'] not in seen_urls:
+                unique_links.append(link)
+                seen_urls.add(link['url'])
+        
+        self.print_with_lock(f"关键词 {keyword} 处理完成，共找到 {len(unique_links)} 个唯一链接")
+        return unique_links
 
     def save_results(self, filename="ysws.m3u"):
         self.print_with_lock(f"\n开始保存结果到文件: {filename}")
@@ -191,7 +153,7 @@ class TonkiangCrawler:
                 f.write(f'#EXTINF:-1 tvg-id="" tvg-name="{item["source"]}" tvg-logo="" group-title="CCTV",{item["source"]}\n')
                 f.write(f'{item["url"]}\n')
         
-        self.print_with_lock(f"成功保存 {len(self.all_links)} 个有效链接到 {filepath}")
+        self.print_with_lock(f"成功保存 {len(self.all_links)} 个链接到 {filepath}")
         return filepath
 
 def main():
@@ -215,7 +177,7 @@ def main():
         
         print(f"\n✅ 爬取完成！")
         print(f"📁 M3U文件: {output_file}")
-        print(f"✅ 有效链接: {len(crawler.all_links)} 个")
+        print(f"✅ 总链接数: {len(crawler.all_links)} 个")
         
         tv_counts = {}
         for item in crawler.all_links:
@@ -230,7 +192,6 @@ def main():
             with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
                 print(f'output_file={output_file}', file=fh)
                 print(f'total_links={len(crawler.all_links)}', file=fh)
-                print(f'valid_links={len(crawler.all_links)}', file=fh)
                 
     except Exception as e:
         print(f"\n❌ 爬虫执行出错: {e}")
@@ -240,6 +201,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
