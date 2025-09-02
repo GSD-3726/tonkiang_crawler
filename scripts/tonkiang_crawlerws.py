@@ -26,7 +26,6 @@ class TonkiangCrawler:
         self.base_url = "https://tonkiang.us/"
         self.request_timeout = (5, 15)
         self.all_links = []  # 存储所有找到的链接
-        self.verified_links = []  # 存储已验证的链接
 
     def generate_random_hash(self):
         """生成随机哈希值"""
@@ -55,7 +54,7 @@ class TonkiangCrawler:
             response.raise_for_status()
             
             print(f"第 {page} 页获取成功，状态码: {response.status_code}")
-            return self.parse_links_only(response.text)
+            return self.parse_links_only(response.text, keyword)
             
         except requests.exceptions.Timeout:
             print(f"第 {page} 页请求超时")
@@ -67,7 +66,7 @@ class TonkiangCrawler:
             print(f"第 {page} 页解析错误: {e}")
             return []
 
-    def parse_links_only(self, html_content):
+    def parse_links_only(self, html_content, source):
         """只解析M3U8链接，不尝试匹配频道名称"""
         found_links = []
         
@@ -95,49 +94,13 @@ class TonkiangCrawler:
                 else:
                     continue
             
-            found_links.append(link)
+            found_links.append({
+                'url': link,
+                'source': source
+            })
             print(f"找到链接: {link}")
         
         return found_links
-
-    def verify_m3u8(self, m3u8_url):
-        """验证M3U8链接有效性"""
-        try:
-            response = self.session.get(m3u8_url, timeout=(2, 3), stream=True)
-            
-            if response.status_code == 200:
-                content_type = response.headers.get('content-type', '').lower()
-                content = response.text[:500]  # 只检查前500个字符
-                
-                # 检查M3U8特征
-                if ('mpegurl' in content_type or 
-                    content.startswith('#EXTM3U') or 
-                    '#EXTINF' in content):
-                    return True
-                    
-            return False
-        except Exception as e:
-            print(f"验证链接失败: {e}")
-            return False
-
-    def verify_links_parallel(self, links):
-        """并行验证链接有效性"""
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-            # 提交所有验证任务
-            future_to_link = {executor.submit(self.verify_m3u8, link): link for link in links}
-            
-            # 收集结果
-            for future in concurrent.futures.as_completed(future_to_link):
-                link = future_to_link[future]
-                try:
-                    is_valid = future.result()
-                    if is_valid:
-                        self.verified_links.append(link)
-                        print(f"✓ 验证通过: {link}")
-                    else:
-                        print(f"✗ 验证失败: {link}")
-                except Exception as e:
-                    print(f"验证链接时出错 {link}: {e}")
 
     def search_multiple_pages(self, keyword="湖南卫视", pages=2, interval=8):
         """搜索多页内容"""
@@ -153,14 +116,6 @@ class TonkiangCrawler:
             if links:
                 print(f"第 {page} 页找到 {len(links)} 个链接")
                 all_links.extend(links)
-                
-                # 添加链接到总列表
-                for link in links:
-                    if link not in self.all_links:
-                        self.all_links.append({
-                            'url': link,
-                            'source': keyword
-                        })
                 
                 # 如果不是最后一页，等待指定的间隔时间
                 if page < pages:
@@ -186,23 +141,17 @@ class TonkiangCrawler:
             f.write('#EXTM3U\n')
             
             # 写入每个链接
-            valid_count = 0
             for item in links_data:
                 link = item['url']
                 source = item['source']
                 
-                # 只保存已验证的链接
-                if link in self.verified_links:
-                    # 使用搜索关键词作为频道名称
-                    f.write(f'#EXTINF:-1 tvg-id="" tvg-name="{source}" tvg-logo="" group-title="卫视",{source}\n')
-                    f.write(f'{link}\n')
-                    print(f"✓ 已添加有效链接: {source} -> {link}")
-                    valid_count += 1
-                else:
-                    print(f"✗ 跳过无效链接: {link}")
+                # 使用搜索关键词作为频道名称
+                f.write(f'#EXTINF:-1 tvg-id="" tvg-name="{source}" tvg-logo="" group-title="卫视",{source}\n')
+                f.write(f'{link}\n')
+                print(f"已添加链接: {source} -> {link}")
         
-        print(f"成功保存 {valid_count} 个有效链接到 {filepath}")
-        return filepath, valid_count
+        print(f"成功保存 {len(links_data)} 个链接到 {filepath}")
+        return filepath, len(links_data)
 
     def run(self, keywords=None, pages=2, interval=8):
         """运行爬虫"""
@@ -211,9 +160,8 @@ class TonkiangCrawler:
         
         # 清空之前的链接列表
         self.all_links = []
-        self.verified_links = []
         
-        # 第一步：收集所有链接
+        # 收集所有链接
         for keyword in keywords:
             print(f"\n{'='*50}")
             print(f"开始处理关键词: {keyword}")
@@ -223,6 +171,7 @@ class TonkiangCrawler:
             
             if links:
                 print(f"为关键词 '{keyword}' 找到 {len(links)} 个链接")
+                self.all_links.extend(links)
             else:
                 print(f"关键词 '{keyword}' 未找到链接")
         
@@ -230,23 +179,24 @@ class TonkiangCrawler:
             print("未找到任何链接")
             return None, [], 0
             
-        print(f"\n总共找到 {len(self.all_links)} 个唯一链接")
+        # 去重处理
+        seen_urls = set()
+        unique_links = []
+        for item in self.all_links:
+            if item['url'] not in seen_urls:
+                unique_links.append(item)
+                seen_urls.add(item['url'])
         
-        # 第二步：并行验证所有链接
-        print(f"\n开始并行验证 {len(self.all_links)} 个链接...")
-        all_urls = [item['url'] for item in self.all_links]
-        self.verify_links_parallel(all_urls)
+        print(f"\n总共找到 {len(unique_links)} 个唯一链接")
         
-        print(f"\n验证完成，有效链接: {len(self.verified_links)} 个")
-        
-        # 第三步：保存结果为M3U格式
-        output_file, valid_count = self.save_to_m3u(
-            self.all_links, 
+        # 保存结果为M3U格式
+        output_file, total_count = self.save_to_m3u(
+            unique_links, 
             "wstv.m3u", 
             "output"
         )
         
-        return output_file, self.all_links, valid_count
+        return output_file, unique_links, total_count
 
 def main():
     """主函数"""
@@ -287,11 +237,11 @@ def main():
     "深圳卫视"   # 深圳广播电影电视集团综合频道
    
     ]
-    pages_to_crawl = 5  # 爬取5页
+    pages_to_crawl = 6  # 爬取5页
     request_interval = 8  # 8秒间隔
     
     try:
-        output_file, all_links, valid_count = crawler.run(
+        output_file, all_links, total_count = crawler.run(
             search_keywords, 
             pages_to_crawl, 
             request_interval
@@ -300,7 +250,7 @@ def main():
         if output_file:
             print(f"\n✅ 爬取完成！")
             print(f"📁 M3U文件: {output_file}")
-            print(f"✅ 有效链接: {valid_count} 个")
+            print(f"✅ 总链接数: {total_count} 个")
             
             # 显示统计信息
             tv_counts = {}
@@ -316,8 +266,7 @@ def main():
             if os.getenv('GITHUB_ACTIONS') == 'true':
                 with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
                     print(f'output_file={output_file}', file=fh)
-                    print(f'total_links={len(all_links)}', file=fh)
-                    print(f'valid_links={valid_count}', file=fh)
+                    print(f'total_links={total_count}', file=fh)
         else:
             print("\n❌ 爬取失败，未找到任何链接")
             exit(1)
